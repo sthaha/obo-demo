@@ -1,0 +1,82 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prom-spy
+  labels:
+    app.kubernetes.io/name: prom-spy
+    app.kubernetes.io/component: prom-spy
+    app.kubernetes.io/version: 0.0.1
+    app: demo
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: prom-spy
+      app.kubernetes.io/component: prom-spy
+      app: demo
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: prom-spy
+        app.kubernetes.io/component: prom-spy
+        app.kubernetes.io/version: 0.0.1
+        app: demo
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        capabilities:
+          drop: ["ALL"]
+      containers:
+        - name: prom-spy
+          image: quay.io/sthaha/prom-spy:v0.0.3
+          imagePullPolicy: Always
+          # volumeMounts:
+          #   - mountPath: /certs
+          #     name: serving-ca-certs
+          args:
+            - https=false
+            # - -c=/certs/tls.crt
+            # - -k=/certs/tls.key
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /healthz
+              port: 8080
+              scheme: HTTP
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /healthz
+              port: 8080
+              # port: 8443
+              # scheme: HTTPS
+              scheme: HTTP
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          securityContext:
+            allowPrivilegeEscalation: false
+          resources:
+            limits:
+              cpu: 200m
+              memory: 100Mi
+            requests:
+              cpu: 100m
+              memory: 20Mi
+          ports:
+            - containerPort: 8080
+              name: http
+              protocol: TCP
+            # - containerPort: 8443
+            #   name: https
+            #   protocol: TCP
+      # volumes:
+      #   - name: serving-ca-certs
+      #     secret:
+      #       secretName: serving-ca-certs
+      # serviceAccountName: prom-spy-sa
+      terminationGracePeriodSeconds: 30

@@ -1,0 +1,17 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: prom-spy
+  annotations:
+    service.beta.openshift.io/serving-cert-secret-name: serving-ca-certs
+  labels:
+    app: demo
+spec:
+  selector:
+    app: demo   # 👈 same label the stack.resourceSelector
+                # resourceSelector:
+                #   matchLabels:
+                #     app: demo
+  ports:
+  - name: metrics
+    port: 8080

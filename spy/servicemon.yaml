@@ -1,0 +1,12 @@
+apiVersion: monitoring.rhobs/v1
+kind: ServiceMonitor
+metadata:
+  name: prom-spy
+  labels:
+   app: demo
+spec:
+  selector:
+    matchLabels:
+      app: demo
+  endpoints:
+  - port: metrics

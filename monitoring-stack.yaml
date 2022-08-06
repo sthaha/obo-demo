@@ -1,0 +1,12 @@
+apiVersion: monitoring.rhobs/v1alpha1
+kind: MonitoringStack
+metadata:
+  name: sample-monitoring-stack
+  labels:
+    obo: example  # 👈 used later by Thanos Querier
+spec:
+  logLevel: debug
+  retention: 1d
+  resourceSelector:
+    matchLabels:
+      app: demo  # 👈 monitors services with label 🏷
