@@ -23,7 +23,7 @@ apply() {
 		sep
 		wait_for_key
 	fi
-	kubectl apply -f $f
+	kubectl apply -f $f --validate=false
 }
 
 build() {
